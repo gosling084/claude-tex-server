@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+      // Target ES2020 for Node.js compatibility
+      "target": "ES2020",
+      // Use Node.js module resolution
+      "module": "CommonJS",
+      // Enable strict type checking
+      "strict": true,
+      // Allow importing JSON files as modules
+      "resolveJsonModule": true,
+      // Enable source maps for debugging
+      "sourceMap": true,
+      // Output directory for compiled files
+      "outDir": "./dist",
+      // Root directory of source files
+      "rootDir": "./src",
+      // Allow importing from node_modules
+      "esModuleInterop": true,
+      // Skip type checking of node_modules
+      "skipLibCheck": true,
+      // Ensure case sensitivity in imports
+      "forceConsistentCasingInFileNames": true,
+      // Additional type definitions
+      "types": ["node"]
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "dist"]
+  }

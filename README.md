@@ -1,20 +1,34 @@
 # claude-tex-server
 
-Full-stack application for interacting with Claude API and rendering LaTeX/MathJax in the browser.
+A full-stack application that serves as a proxy for Claude API calls and renders LaTeX/MathJax in the browser.
 
-## Structure
-- `/client`: React + TypeScript frontend
-- `/server`: Express + TypeScript backend
+## Project Structure
+
+```
+claude-tex-server/
+├── client/               # React + TypeScript frontend
+│   ├── src/
+│   │   ├── components/  # React components
+│   │   ├── services/    # API service layer
+│   │   └── types/       # TypeScript definitions
+│   └── .env.local       # Frontend environment variables
+└── server/              # Express + TypeScript backend
+    ├── src/
+    │   ├── controllers/ # Request handlers
+    │   ├── routes/      # API routes
+    │   └── index.ts     # Server entry point
+    └── .env             # Backend environment variables
+```
 
 ## Setup Instructions
 
 ### Prerequisites
 - Node.js (v18 or higher recommended)
-- npm or yarn
-- Git
+- npm
+- Anthropic API key (for production use)
 
-### Server Setup
-1. Navigate to the server directory:
+### Backend Setup
+1. Navigate to server directory:
    ```bash
    cd server
    ```
@@ -22,18 +36,20 @@ Full-stack application for interacting with Claude API and rendering LaTeX/MathJ
    ```bash
    npm install
    ```
-3. Create a `.env` file with your Anthropic API key:
+3. Create `.env` file:
    ```
-   ANTHROPIC_API_KEY=your_api_key_here
    PORT=3000
+   ANTHROPIC_API_KEY=your_api_key_here
+   NODE_ENV=development
+   CORS_ORIGIN=http://localhost:5173
    ```
-4. Start the development server:
+4. Start development server:
    ```bash
    npm run dev
    ```
 
-### Client Setup
-1. Navigate to the client directory:
+### Frontend Setup
+1. Navigate to client directory:
    ```bash
    cd client
    ```
@@ -41,22 +57,24 @@ Full-stack application for interacting with Claude API and rendering LaTeX/MathJ
    ```bash
    npm install
    ```
-3. Create a `.env.local` file:
+3. Create `.env.local` file:
    ```
    VITE_API_URL=http://localhost:3000/api
    ```
-4. Start the development server:
+4. Start development server:
    ```bash
    npm run dev
    ```
 
 ## Development
+
 The development servers will be available at:
 - Frontend: http://localhost:5173
 - Backend: http://localhost:3000
 
-## Features
-- Secure API calls to Claude API via backend proxy
-- LaTeX/MathJax rendering in the browser
-- TypeScript support for both frontend and backend
-- React-based UI with modern development practices
+### API Endpoints
+
+- `GET /health`: Health check endpoint
+- `POST /api/claude/chat`: Proxy endpoint for Claude API
+  - Request body: `{ "prompt": "string" }`
+  - Returns: Claude API response or error object
