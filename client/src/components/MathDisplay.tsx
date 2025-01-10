@@ -22,9 +22,10 @@ declare global {
 
 interface MathDisplayProps {
   tex: string;
+  align?: 'left' | 'center' | 'right';
 }
 
-const MathDisplay = ({ tex }: MathDisplayProps) => {
+const MathDisplay = ({ tex, align = 'left' }: MathDisplayProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -67,7 +68,8 @@ const MathDisplay = ({ tex }: MathDisplayProps) => {
   return (
     <div 
       ref={containerRef}
-      className="math-display overflow-x-auto"
+      className={`math-display overflow-x-auto text-${align}`}
+      style={{ textAlign: align }}
     >
       {tex}
     </div>
