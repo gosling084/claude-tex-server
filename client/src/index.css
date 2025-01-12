@@ -3,10 +3,158 @@
 @tailwind utilities;
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color-scheme: dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* Core colors */
+  --color-background: #242424;
+  --color-user-msg: #2D2D2D;
+  --color-assistant-msg: #1F1F1F;
+  --color-send-button: #C85E11;
+  --color-text-primary: rgba(255, 255, 255, 0.9);
+  --color-text-secondary: rgba(255, 255, 255, 0.6);
+  --color-border: rgba(255, 255, 255, 0.1);
+
+  /* Spacing */
+  --spacing-message: 1.5rem;
+  --spacing-container: 2rem;
+
+  /* Border radius */
+  --radius-base: 0.5rem;
+  --radius-large: 0.75rem;
+}
+
+/* Base styles */
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+
+/* Message components */
+.message {
+  padding: var(--spacing-message);
+  margin-bottom: var(--spacing-message);
+  border-radius: var(--radius-large);
+  max-width: 85%;
+  border: 1px solid var(--color-border);
+}
+
+.message-user {
+  background-color: var(--color-user-msg);
+  margin-left: auto;
+  margin-right: var(--spacing-message);
+  border-top-right-radius: 0;
+}
+
+.message-assistant {
+  background-color: var(--color-assistant-msg);
+  margin-right: auto;
+  margin-left: var(--spacing-message);
+  border-top-left-radius: 0;
+}
+
+.message-draft {
+  opacity: 0.7;
+  border-style: dashed;
+}
+
+.message-timestamp {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.75rem;
+}
+
+/* Input area */
+.input-container {
+  background-color: var(--color-user-msg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  padding: 1rem;
+}
+
+.input-textarea {
+  background-color: transparent;
+  border: none;
+  color: var(--color-text-primary);
+  width: 100%;
+  resize: none;
+  outline: none;
+}
+
+.send-button {
+  background-color: var(--color-send-button);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-base);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.send-button:hover {
+  opacity: 0.9;
+}
+
+.send-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Helper info */
+.helper-text {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+/* Container sizing */
+.chat-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--spacing-container);
+}
+
+/* Layout classes */
+.main-layout {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.chat-section {
+  width: 66.7%;
+  margin: auto;
+}
+
+.preview-section {
+  width: 33.333333%;
+}
+
+.chat-history {
+  min-height: 600px;
+  margin-bottom: 1rem;
+  background-color: var(--color-assistant-msg);
+  border-radius: var(--radius-large);
+  border: 1px solid var(--color-border);
+}
+
+.preview-container {
+  position: sticky;
+  top: 1.5rem;
+  background-color: var(--color-assistant-msg);
+  border-radius: var(--radius-large);
+  border: 1px solid var(--color-border);
+  padding: var(--spacing-message);
+}
+
+.preview-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.app-title {
+  font-size: 1.875rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  text-align: center;
 }

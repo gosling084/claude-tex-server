@@ -2,36 +2,28 @@ import MathDisplay from './MathDisplay';
 
 interface ChatMessage {
   id: string;
-  type: 'user' | 'assistant';
+  type: 'user' | 'assistant' | 'draft';
   content: string;
   timestamp?: Date;
 }
 
 const ChatMessage = ({ type, content, timestamp }: ChatMessage) => {
   return (
-    <div className="mb-4 w-full text-left">
-      <div className={`
-        p-4 rounded-lg
-        ${type === 'user' 
-          ? 'ml-auto mr-4 bg-blue-600 text-white max-w-[80%]'
-          : 'ml-4 mr-auto bg-gray-700 text-white max-w-[80%]'
-        }
-      `}>
+    <div className={`message message-${type}`}>
         {/* Message content */}
-        <div className="mb-2 text-left">
+        <div >
           <MathDisplay tex={content} />
         </div>
 
-        {/* Timestamp */}
-        {timestamp && (
-          <div className="text-xs opacity-75 text-left">
+        {/* Timestamp - don't show for draft messages */}
+        {timestamp && type !== 'draft' && (
+          <div className="message-timestamp">
             {timestamp.toLocaleTimeString([], { 
               hour: '2-digit', 
               minute: '2-digit' 
             })}
           </div>
         )}
-      </div>
     </div>
   );
 };
