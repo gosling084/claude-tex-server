@@ -16,6 +16,8 @@ claude-tex-server/
     ├── src/
     │   ├── controllers/ # Request handlers
     │   ├── routes/      # API routes
+    │   ├── types/       # TypeScript type definitions
+    │   ├── mocks/       # Mock data for testing
     │   └── index.ts     # Server entry point
     └── .env             # Backend environment variables
 ```

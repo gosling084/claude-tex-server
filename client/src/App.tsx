@@ -2,6 +2,7 @@ import { useState } from 'react';
 import MathInput from './components/MathInput';
 import ChatMessage from './components/ChatMessage';
 import ChatMessageTest from './components/ChatMessageTest';
+import ConversationTest from './components/ConversationTest';
 
 function App() {
   const [currentInput, setCurrentInput] = useState('');
@@ -41,6 +42,9 @@ function App() {
             />
           </div>
         </div>
+        <div className="chat-section">
+          <ConversationTest />
+        </div>  
       </main>
     </div>
   );

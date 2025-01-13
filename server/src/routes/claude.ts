@@ -32,4 +32,4 @@ router.post('/chat',
   }
 );
 
-export { router };
+export { router as claudeRouter};

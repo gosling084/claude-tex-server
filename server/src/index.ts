@@ -1,7 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { router as claudeRouter } from './routes/claude';
+import { claudeRouter } from './routes/claude';
+import { conversationRouter } from './routes/conversation'
 
 // Load environment variables
 dotenv.config();
@@ -19,6 +20,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/claude', claudeRouter);
+app.use('/api/conversation', conversationRouter)
 
 // Health check endpoint
 app.get('/health', (req, res) => {
