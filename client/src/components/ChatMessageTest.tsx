@@ -20,12 +20,6 @@ const ChatMessageTest = () => {
       content: 'Here\'s another way to write it:\n\n\\[x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}\\]\n\nCan you solve $x^2 + 5x + 6 = 0$?',
       timestamp: new Date()
     },
-    {
-      id: '4',
-      type: 'draft' as const,
-      content: 'Here\'s a draft message $f(x) = e^{x}$',
-      timestamp: new Date()
-    }
   ];
 
   return (

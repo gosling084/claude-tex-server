@@ -8,7 +8,8 @@ function App() {
 
   const handleSubmit = async (prompt: string) => {
     console.log('Submitted prompt:', prompt);
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Later this will handle the actual API call
+    // await new Promise(resolve => setTimeout(resolve, 1000));
   };
 
   return (
@@ -25,13 +26,11 @@ function App() {
           <div className="chat-history">
             <ChatMessageTest />
             {/* Show draft message if there's input */}
-            {currentInput.trim() && (
               <ChatMessage
                 id="draft"
                 type="draft"
-                content={currentInput}
+                content={currentInput.trim() ? currentInput : "Message preview will appear here"}
               />
-            )}
           </div>
 
           {/* Input area */}

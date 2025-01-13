@@ -56,57 +56,49 @@ const MathInput = ({ onSubmit, onChange, isLoading = false }: MathInputProps) =>
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full">
-      <div className="flex flex-col gap-2">
-        <textarea
-          ref={textareaRef}
-          value={prompt}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          placeholder="Ask a math question..."
-          disabled={isLoading}
-          className="w-full p-3 border border-gray-700 rounded-md resize-none
-                     bg-[#1a1a1a] text-white placeholder-gray-500
-                     overflow-hidden"
-          rows={2}  // Start with one row, will grow automatically
-        />
-        
-        <div className="text-center text-sm space-y-1">
-          <div className="text-gray-400">
-            {prompt.length} characters
-          </div>
-          <div className="text-gray-400">
-            Press {navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + Enter to send
-          </div>
-        </div>
-
-        <div className="flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={handleClear}
-            disabled={isLoading || !prompt.trim()}
-            className={`px-4 py-2 rounded-md text-white transition-colors
-              ${isLoading || !prompt.trim()
-                ? 'bg-gray-600 cursor-not-allowed'
-                : 'bg-gray-700 hover:bg-gray-600'
-              }`}
-          >
-            Clear
-          </button>
-
-          <button
-            type="submit"
-            disabled={isLoading || !prompt.trim()}
-            className={`px-4 py-2 rounded-md text-white transition-colors
-              ${isLoading || !prompt.trim() 
-                ? 'bg-blue-900 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700'
-              }`}
-          >
-            {isLoading ? 'Processing...' : 'Send'}
-          </button>
-        </div>
+    <form onSubmit={handleSubmit} className="message-form">
+      
+      <textarea
+        ref={textareaRef}
+        value={prompt}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        placeholder="Ask a math question..."
+        disabled={isLoading}
+        className="input-textarea"
+        rows={2}
+      />
+  
+  <div className="input-actions">
+    <div className="input-actions-left">
+      <button
+        type="button"
+        onClick={handleClear}
+        disabled={isLoading || !prompt.trim()}
+        className="clear-button"
+      >
+        Clear
+      </button>
+      <div className="helper-text">
+        {prompt.length} characters
       </div>
+    </div>
+
+    <div className="input-actions-right">
+      {prompt.trim() && (
+        <div className="keyboard-hint">
+          Press {navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + Enter to send
+        </div>
+      )}
+      <button
+        type="submit"
+        disabled={isLoading || !prompt.trim()}
+        className="send-button"
+      >
+        ↑
+      </button>
+    </div>
+  </div>
     </form>
   );
 };
