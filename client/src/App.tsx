@@ -1,51 +1,37 @@
 import { useState } from 'react';
-import MathInput from './components/MathInput';
-import ChatMessage from './components/ChatMessage';
-import ChatMessageTest from './components/ChatMessageTest';
-import ConversationTest from './components/ConversationTest';
+import { Message } from './types/conversation';
+import ConversationHub from './components/ConversationHub';
 
 function App() {
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+  const [currentMessages, setCurrentMessages] = useState<Message[]>([]);
   const [currentInput, setCurrentInput] = useState('');
 
-  const handleSubmit = async (prompt: string) => {
-    console.log('Submitted prompt:', prompt);
-    // Later this will handle the actual API call
-    // await new Promise(resolve => setTimeout(resolve, 1000));
+  const handleReturnToHub = () => {
+    setActiveConversationId(null);
+    setCurrentMessages([]);
+    setCurrentInput('');
   };
 
   return (
-    <div className="chat-container">
-      {/* Header */}
+    <div className="chat-section">
       <header>
-        <h1 className="app-title">Math Chat</h1>
+        <h1 
+          onClick={handleReturnToHub} 
+          className="app-title cursor-pointer"
+        >
+          Math Chat
+        </h1>
       </header>
 
-      {/* Main content */}
-      <main className="main-layout">
-        <div className="chat-section">
-          {/* Chat history */}
-          <div className="chat-history">
-            <ChatMessageTest />
-            {/* Show draft message if there's input */}
-              <ChatMessage
-                id="draft"
-                type="draft"
-                content={currentInput.trim() ? currentInput : "Message preview will appear here"}
-              />
-          </div>
-
-          {/* Input area */}
-          <div className="input-container">
-            <MathInput 
-              onSubmit={handleSubmit}
-              onChange={setCurrentInput}
-            />
-          </div>
-        </div>
-        <div className="chat-section">
-          <ConversationTest />
-        </div>  
-      </main>
+      <ConversationHub 
+        activeConversationId={activeConversationId}
+        setActiveConversationId={setActiveConversationId}
+        currentMessages={currentMessages}
+        setCurrentMessages={setCurrentMessages}
+        currentInput={currentInput}
+        setCurrentInput={setCurrentInput}
+      />
     </div>
   );
 }

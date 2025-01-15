@@ -56,11 +56,12 @@ body {
 }
 
 .message-draft {
-  background-color: var(--color-user-msg);
+  background-color: var(--color-assistant-msg);
   opacity: 0.7;
-  border-style: dashed;
+  border-style: none;
   margin-right: auto;
   margin-left: auto;
+  margin-top: 1.5rem;
 }
 
 .message-timestamp {
@@ -192,11 +193,17 @@ body {
 }
 
 .chat-history {
-  min-height: 600px;
   margin-bottom: 1rem;
   background-color: var(--color-assistant-msg);
   border-radius: var(--radius-large);
   border: 1px solid var(--color-border);
+}
+
+.conversation-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
 .preview-container {
