@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Conversation, Message } from '../types/conversation';
+import { Message } from '../types/conversation';
 import { getConversations, getConversation, createConversation, addMessage } from '../services/conversation';
 import MathInput from './MathInput';
 import ChatMessage from './ChatMessage';
-import { ChevronUp, ChevronDown } from 'lucide-react'
 
 interface ConversationMeta {
   id: string;
@@ -31,7 +30,6 @@ const ConversationHub = ({
   const [conversationMetas, setConversationMetas] = useState<ConversationMeta[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isExpanded, setIsExpanded] = useState(true);
 
   // Fetch conversation metadata on mount
   useEffect(() => {
@@ -77,17 +75,6 @@ const ConversationHub = ({
     }
   };
 
-  const handleConversationSelect = async (id: string) => {
-    try {
-      const conversation = await getConversation(id);
-      setActiveConversationId(id);
-      setCurrentMessages(conversation.messages);
-      setCurrentInput('');  // Clear any draft
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load conversation');
-    }
-  };
-
   if (loading) return <div>Loading conversations...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -123,42 +110,7 @@ const ConversationHub = ({
           onChange={setCurrentInput}
         />
       </div>
-  
-      {/* Conversation grid - shows only when no active conversation */}
-      {!activeConversationId && (
-        <div>
-          <div className="flex justify-between items-center mb-4">
-            <h2>
-              Your recent chats
-              <button 
-                onClick={() => setIsExpanded(!isExpanded)} 
-                className="expand-button"
-              >
-                <span className="flex items-center gap-1">
-                  {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                  {isExpanded ? 'Hide' : 'Show'}
-                </span>
-              </button>
-            </h2>
-          </div>
 
-          {/* Only render grid if expanded */}
-          {isExpanded && (
-            <div className="conversation-grid">
-              {conversationMetas.map(conv => (
-                <div 
-                  key={conv.id} 
-                  className="conversation-item"
-                  onClick={() => handleConversationSelect(conv.id)}
-                >
-                  <h3>{conv.title}</h3>
-                  <p>{new Date(conv.updatedAt).toLocaleString()}</p>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 };

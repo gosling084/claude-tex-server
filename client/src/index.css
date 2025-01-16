@@ -302,3 +302,63 @@ body {
   text-align: center;
   cursor: pointer;
 }
+
+.search-container {
+  margin-bottom: 1.5rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-assistant-msg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  color: var(--color-text-primary);
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.conversation-list-item {
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  background-color: var(--color-assistant-msg);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.conversation-list-item:hover {
+  background-color: #2D2D2D;
+}
+
+.back-button {
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.back-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.start-chat-button {
+  padding: 0.5rem 1rem;
+  background-color: var(--color-send-button);
+  color: white;
+  border: none;
+  border-radius: var(--radius-base);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.start-chat-button:hover {
+  opacity: 0.9;
+}
