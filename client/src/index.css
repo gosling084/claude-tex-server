@@ -204,6 +204,78 @@ body {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
   margin-top: 1rem;
+  transition: all 0.3s ease-in-out;
+}
+
+.conversation-item {
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);  /* similar to var(--color-border) */
+  border-radius: var(--radius-large);
+  background-color: var(--color-assistant-msg);
+  cursor: pointer;
+  transition: background-color 0.2s;
+  /* Add flex display with column direction */
+  display: flex;
+  flex-direction: column;
+  /* Set minimum height to ensure consistent size */
+  min-height: 120px;
+  animation: fadeInSlide 0.3s ease-out forwards;
+  animation-delay: calc(var(--index) * 0.1s);  /* for staggered entrance */
+}
+
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.conversation-item:hover {
+  background-color: #2D2D2D;  /* slightly lighter than base color */
+}
+
+.conversation-item h3 {
+  font-weight: 500;
+}
+
+.conversation-item p {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  /* Push timestamp to bottom */
+  margin-top: auto;
+}
+
+.expand-button {
+  padding: 0.25rem 0.5rem;
+  margin-left: 0.5rem;
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.expand-button:hover {
+  color: var(--color-text-primary);
+}
+
+.view-all-button {
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.view-all-button:hover {
+  color: var(--color-text-primary);
 }
 
 .preview-container {
@@ -228,4 +300,5 @@ body {
   font-weight: bold;
   margin-bottom: 2rem;
   text-align: center;
+  cursor: pointer;
 }

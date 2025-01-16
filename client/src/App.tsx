@@ -18,7 +18,7 @@ function App() {
       <header>
         <h1 
           onClick={handleReturnToHub} 
-          className="app-title cursor-pointer"
+          className="app-title"
         >
           Math Chat
         </h1>

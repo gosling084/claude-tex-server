@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { ArrowUp } from 'lucide-react';
 
 interface MathInputProps {
   onSubmit: (prompt: string) => Promise<void>;
@@ -95,7 +96,7 @@ const MathInput = ({ onSubmit, onChange, isLoading = false }: MathInputProps) =>
         disabled={isLoading || !prompt.trim()}
         className="send-button"
       >
-        ↑
+        <ArrowUp/>
       </button>
     </div>
   </div>
