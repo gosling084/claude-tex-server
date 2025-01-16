@@ -305,6 +305,7 @@ body {
 
 .search-container {
   margin-bottom: 1.5rem;
+  width: 100%;
 }
 
 .search-input {
@@ -321,6 +322,13 @@ body {
   color: var(--color-text-secondary);
 }
 
+.conversation-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .conversation-list-item {
   padding: 1rem;
   margin-bottom: 0.5rem;
@@ -329,10 +337,17 @@ body {
   background-color: var(--color-assistant-msg);
   cursor: pointer;
   transition: background-color 0.2s;
+  width: 100%;
 }
 
 .conversation-list-item:hover {
   background-color: #2D2D2D;
+}
+
+.list-container {
+  max-width: 800px;  /* or whatever width works best */
+  margin: 0 auto;    /* center the container */
+  width: 100%;       /* take full width up to max-width */
 }
 
 .back-button {
@@ -343,6 +358,9 @@ body {
   padding: 0.5rem;
   border-radius: 50%;
   transition: background-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  margin-right: 1rem;
 }
 
 .back-button:hover {
@@ -357,8 +375,30 @@ body {
   border-radius: var(--radius-base);
   cursor: pointer;
   transition: opacity 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;  /* Space between icon and text */
 }
 
 .start-chat-button:hover {
   opacity: 0.9;
+}
+
+/* Add new styles for header layout */
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;  /* Space between back button and title */
+}
+
+.header-right {
+  margin-left: auto;  /* Push to right side */
 }

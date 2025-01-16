@@ -52,6 +52,12 @@ const ConversationHub = ({
     fetchConversations();
   }, []);
 
+  const inferTitle = (message: string): string => {
+    // Take first 5 words or up to first question mark
+    const title = message.split('?')[0].split(' ').slice(0, 5).join(' ');
+    return title + (title.length < message.length ? '...' : '');
+  };
+
   const handleSubmit = async (prompt: string) => {
     try {
       if (activeConversationId) {
@@ -60,7 +66,7 @@ const ConversationHub = ({
         setCurrentMessages([...currentMessages, newMessage]);
       } else {
         // Create new conversation and set it as active
-        const newConversation = await createConversation('New Conversation', prompt);
+        const newConversation = await createConversation(inferTitle(prompt), prompt);
         setActiveConversationId(newConversation.id);
         setCurrentMessages(newConversation.messages);
         // Add to conversation metas

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronUp, ChevronDown } from 'lucide-react';
+import { ChevronLeft, ChevronUp, ChevronDown, PlusCircle } from 'lucide-react';
 import { Conversation } from '../types/conversation';
 import { getConversations, getConversation } from '../services/conversation';
 
@@ -30,6 +30,11 @@ const ChatHistory = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredConversations = conversationMetas.filter(conv => 
+    conv.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Fetch conversations
   useEffect(() => {
@@ -40,7 +45,7 @@ const ChatHistory = ({
           id: conv.id,
           title: conv.title,
           updatedAt: conv.updatedAt
-        }));
+        })).sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
         setConversationMetas(metas);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch conversations');
@@ -70,10 +75,10 @@ const ChatHistory = ({
 
   if (viewMode === 'list') {
     return (
-      <div className="space-y-4">
+      <div className="list-container space-y-4">
         {/* List view header */}
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-4">
+        <div className="list-header">
+          <div className="header-left">
             <button 
               onClick={() => setViewMode('chat')}
               className="back-button"
@@ -82,12 +87,14 @@ const ChatHistory = ({
             </button>
             <h2>Your chat history</h2>
           </div>
-          <button 
-            onClick={() => setViewMode("chat")}
-            className="start-chat-button"
-          >
-            Start New Chat
-          </button>
+          <div className="header-right">
+            <button 
+              onClick={() => setViewMode("chat")}
+              className="start-chat-button"
+            >
+              <PlusCircle size={16} /> Start New Chat
+            </button>
+          </div>
         </div>
 
         {/* Search bar */}
@@ -96,13 +103,23 @@ const ChatHistory = ({
             type="text"
             placeholder="Search your chats..."
             className="search-input"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
 
-        {/* Full conversation list */}
+        {/* Conversation list - filtered by search query */}
         <div className="conversation-list">
-          <div>You have {conversationMetas.length} previous chats with Claude</div>
-          {conversationMetas.map(conv => (
+          {searchQuery === ""
+            ? (<div>You have {conversationMetas.length} previous chats with Claude</div>)
+            : (
+              <div>{filteredConversations.length === 1
+                ? `There is one chat matching "${searchQuery}"`
+                : `There are ${filteredConversations.length} chats matching "${searchQuery}"`
+              }</div>
+            )
+          }
+          {filteredConversations.map(conv => (
             <div 
               key={conv.id}
               className="conversation-list-item"
