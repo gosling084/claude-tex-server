@@ -62,14 +62,39 @@ const ConversationHub = ({
   const handleSubmit = async (prompt: string) => {
     try {
       if (activeConversationId) {
-        // Add to existing conversation
-        const newMessage = await addMessage(activeConversationId, prompt, 'user');
-        setCurrentMessages([...currentMessages, newMessage]);
+        // Create user message locally first
+        const userMessage: Message = {
+            id: crypto.randomUUID(),
+            conversationId: activeConversationId,
+            content: prompt,
+            type: 'user',
+            timestamp: new Date()
+        };
+        
+        // Send user message, get assistant response, then append both to conversation
+        await addMessage(activeConversationId, prompt, 'user').then((assistantMessage) => {
+          setCurrentMessages([...currentMessages, userMessage, assistantMessage]);
+        });          
       } else {
-        // Create new conversation and set it as active
+        // Create new conversation and handle both messages
         const newConversation = await createConversation(inferTitle(prompt), prompt);
         setActiveConversationId(newConversation.id);
-        setCurrentMessages(newConversation.messages);
+        
+        // Create user message
+        const userMessage: Message = {
+            id: crypto.randomUUID(),
+            conversationId: newConversation.id,
+            content: prompt,
+            type: 'user',
+            timestamp: new Date()
+        };
+
+        // Get assistant response
+        const assistantMessage = await addMessage(newConversation.id, prompt, 'user');
+        
+        // Set both messages
+        setCurrentMessages([userMessage, assistantMessage]);
+          
         // Add to conversation metas
         setConversationMetas([{
           id: newConversation.id,

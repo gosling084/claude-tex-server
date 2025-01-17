@@ -3,6 +3,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { Conversation, Message } from '../types/conversation';
 import { mockConversations } from '../mocks/conversations';
 import { v4 as uuidv4 } from 'uuid';  // We'll need to add this package
+import { getMockResponse } from '../mocks/responses';
 
 const router = Router();
 
@@ -39,21 +40,32 @@ router.post('/', async (req: Request, res: Response, next: NextFunction): Promis
             return;
         }
 
-        const conversationId: string = uuidv4()
+        const conversationId: string = uuidv4();
+
+        // Create initial conversation with user message
         const newConversation: Conversation = {
             id: conversationId,
             title,
             createdAt: new Date(),
             updatedAt: new Date(),
-            messages: [{
-                id: uuidv4(),
-                conversationId: conversationId,
-                content: message,
-                type: 'user',
-                timestamp: new Date()
-            }]
+            messages: []
         };
 
+        // Add user message
+        const userMessage: Message = {
+            id: uuidv4(),
+            conversationId: conversationId,
+            content: message,
+            type: 'user',
+            timestamp: new Date()
+        };
+        newConversation.messages.push(userMessage);
+
+        // Generate and add assistant response
+        const assistantMessage = await getMockResponse(message, conversationId);
+        newConversation.messages.push(assistantMessage);
+
+        // Add to mock conversations
         // In real implementation, would save to database
         mockConversations.push(newConversation);
         res.status(201).json(newConversation);
@@ -79,18 +91,14 @@ router.post('/:id/messages', async (req: Request, res: Response, next: NextFunct
             return;
         }
 
-        const newMessage: Message = {
-            id: uuidv4(),
-            conversationId,
-            content,
-            type,
-            timestamp: new Date()
-        };
-
-        conversation.messages.push(newMessage);
+        // Add user message to conversation (to be done in database later)
+        conversation.messages.push(content)
+        // Generate and return mock assistant message
+        const assistantMessage = await getMockResponse(content, conversationId);
+        conversation.messages.push(assistantMessage);
         conversation.updatedAt = new Date();
 
-        res.status(201).json(newMessage);
+        res.status(201).json(assistantMessage);
     } catch (error) {
         next(error);
     }
