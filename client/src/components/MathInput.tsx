@@ -1,3 +1,4 @@
+// client/src/components/MathInput.tsx
 import { useState, useRef, useEffect } from 'react';
 import { ArrowUp } from 'lucide-react';
 

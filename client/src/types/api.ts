@@ -1,3 +1,4 @@
+// client/src/types/api.ts
 import Message from '@anthropic-ai/sdk';
 
 export type ClaudeResponse = Message;

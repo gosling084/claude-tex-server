@@ -1,3 +1,4 @@
+// server/src/routes/claude.ts
 import { Router, Request, Response, NextFunction } from 'express';
 import { processMessage } from '../controllers/claude';
 

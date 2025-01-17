@@ -1,3 +1,4 @@
+// server/src/controllers/claude.ts
 import Anthropic from '@anthropic-ai/sdk';
 
 const anthropic = new Anthropic({

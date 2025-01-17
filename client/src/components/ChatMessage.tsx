@@ -1,3 +1,4 @@
+// client/src/components/ChatMessage.tsx
 import MathDisplay from './MathDisplay';
 
 interface ChatMessage {

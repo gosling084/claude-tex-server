@@ -1,3 +1,4 @@
+// client/src/services/conversation.ts
 import { Conversation, Message } from '../types/conversation';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';

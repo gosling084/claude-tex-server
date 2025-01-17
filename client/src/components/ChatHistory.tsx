@@ -1,3 +1,4 @@
+// client/src/components/ChatHistory.tsx
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronUp, ChevronDown, PlusCircle } from 'lucide-react';
 import { Conversation } from '../types/conversation';

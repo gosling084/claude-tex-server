@@ -1,3 +1,4 @@
+// client/src/components/MathResponse.tsx
 import MathDisplay from './MathDisplay';
 
 interface MathResponseProps {

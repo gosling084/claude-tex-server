@@ -1,3 +1,4 @@
+// client/src/components/ConversationHub.tsx
 import { useState, useEffect } from 'react';
 import { Message } from '../types/conversation';
 import { getConversations, getConversation, createConversation, addMessage } from '../services/conversation';

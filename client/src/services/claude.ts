@@ -1,3 +1,4 @@
+// client/src/services/claude.ts
 import Message from '@anthropic-ai/sdk';
 import { ClaudeError } from '../types/api';
 

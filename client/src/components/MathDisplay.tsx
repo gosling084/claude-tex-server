@@ -1,3 +1,4 @@
+// client/src/components/MathDisplay.tsx
 import { useEffect, useRef } from 'react';
 
 declare global {

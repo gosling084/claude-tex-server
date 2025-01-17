@@ -1,4 +1,4 @@
-// server/src/types/conversation.ts
+// client/src/types/conversation.ts
 
 export interface Message {
     id: string;
