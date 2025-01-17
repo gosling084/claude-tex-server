@@ -1,4 +1,4 @@
-import ChatMessage from "./ChatMessage";
+import ChatMessage from "../components/ChatMessage";
 
 const ChatMessageTest = () => {
   const testMessages = [

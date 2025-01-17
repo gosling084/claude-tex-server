@@ -1,4 +1,4 @@
-import MathResponse from './MathResponse';
+import MathResponse from '../components/MathResponse';
 
 const ResponseTest = () => {
   const testResponses = [

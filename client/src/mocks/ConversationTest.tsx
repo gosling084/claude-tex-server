@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Conversation } from '../types/conversation';
 import { getConversations, createConversation, addMessage } from '../services/conversation';
-import ChatMessage from './ChatMessage';
+import ChatMessage from '../components/ChatMessage';
 
 const ConversationTest = () => {
   const [conversations, setConversations] = useState<Conversation[]>([]);

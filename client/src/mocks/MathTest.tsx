@@ -1,4 +1,4 @@
-import MathDisplay from './MathDisplay';
+import MathDisplay from '../components/MathDisplay';
 
 const MathTest = () => {
   const testEquations = [
