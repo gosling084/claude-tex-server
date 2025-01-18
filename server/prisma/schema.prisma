@@ -26,7 +26,7 @@ model Message {
   content String
   type MessageType
   timestamp DateTime @default(now())
-  conversation Conversation @relation(fields: [conversationId], references: [id])
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   conversationId String
 }
 
