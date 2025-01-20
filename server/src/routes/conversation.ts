@@ -1,8 +1,7 @@
 // server/src/routes/conversation.ts
 import { Router, Request, Response, NextFunction } from 'express';
 import { Conversation, Message } from '../types/conversation';
-import { mockConversations } from '../mocks/conversations';
-import { v4 as uuidv4 } from 'uuid';  // We'll need to add this package
+import { v4 as uuidv4 } from 'uuid';
 import { getMockResponse } from '../mocks/responses';
 import prisma from '../lib/prisma';
 import { Prisma } from '@prisma/client';
@@ -34,7 +33,18 @@ router.get('/', async (req: Request, res: Response, next: NextFunction): Promise
         });
         res.json(conversations);
     } catch (error) {
-        next(error);
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            res.status(500).json({ 
+                message: 'Database error', 
+                code: error.code 
+            });
+        } else if (error instanceof Prisma.PrismaClientInitializationError) {
+            res.status(503).json({ 
+                message: 'Database connection error' 
+            });
+        } else {
+            next(error);
+        }
     }
 });
 
@@ -67,7 +77,26 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction): Prom
         }
         res.json(conversation);
     } catch (error) {
-        next(error);
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            switch (error.code) {
+                case 'P2023':  // Inconsistent column data
+                    res.status(400).json({ 
+                        message: 'Invalid conversation ID format' 
+                    });
+                    break;
+                default:
+                    res.status(500).json({ 
+                        message: 'Database error', 
+                        code: error.code 
+                    });
+            }
+        } else if (error instanceof Prisma.PrismaClientInitializationError) {
+            res.status(503).json({ 
+                message: 'Database connection error' 
+            });
+        } else {
+            next(error);
+        }
     }
 });
 
@@ -83,16 +112,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction): Promis
 
         const conversationId: string = uuidv4();
 
-        // Create initial conversation with user message
-        const newConversation: Conversation = {
-            id: conversationId,
-            title: title,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            messages: []
-        };
-
-        // Add user message
+        // Create entry user message
         const userMessage: Message = {
             id: uuidv4(),
             conversationId: conversationId,
@@ -100,34 +120,53 @@ router.post('/', async (req: Request, res: Response, next: NextFunction): Promis
             type: 'user',
             timestamp: new Date()
         };
-        newConversation.messages.push(userMessage);
 
-        // Generate and add assistant response
+        // Generate assistant response
         const assistantMessage = await getMockResponse(message, conversationId);
-        newConversation.messages.push(assistantMessage);
 
-        // Add to conversations in database
-        await prisma.conversation.create({
-            data: {
-                id: newConversation.id,
-                title: title,
-                createdAt: newConversation.createdAt,
-                updatedAt: newConversation.updatedAt,
-                messages: {
-                    createMany: {
-                        data: newConversation.messages.map(m => {
-                            return {
-                                id: m.id,
-                                content: m.content,
-                                type: m.type,
-                                timestamp: m.timestamp,
-                                conversationId: m.conversationId
-                            }
-                        })
+        // Create new conversation and add new messages in a single transaction
+        const newConversation: Conversation | null = await prisma.$transaction(async (tx) => {
+            // Create conversation
+            await tx.conversation.create({
+                data: {
+                    id: conversationId,
+                    title: title,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                }
+            });
+
+            // Add messages
+            await tx.message.createMany({
+                data: [userMessage, assistantMessage]
+            });
+
+            // Fetch new conversation from database
+            return tx.conversation.findUnique({
+                where: {
+                    id: conversationId
+                },
+                select: {
+                    id: true,
+                    title: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    messages: {
+                        select: {
+                            id: true,
+                            content: true,
+                            type: true,
+                            timestamp: true,
+                            conversationId: true
+                        }
                     }
                 }
-            }
-        })
+            });
+        });
+        if (!newConversation) {
+            res.status(404).json({ message: 'Conversation not found' });
+            return;
+        }
         res.status(201).json(newConversation);
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -183,24 +222,40 @@ router.post('/:id/messages', async (req: Request, res: Response, next: NextFunct
             return;
         }
 
-        // Then proceed with message creation
-        const userMessage: Message = {
-            id: uuidv4(),
-            conversationId: conversationId,
-            content: content,
-            type: type,
-            timestamp: new Date()
-        };
+        // Create messages in a transaction
+        const result = await prisma.$transaction(async (tx) => {
+            // Create user message
+            const userMessage: Message = await tx.message.create({
+                data: {
+                    id: uuidv4(),
+                    conversationId,
+                    content,
+                    type,
+                    timestamp: new Date()
+                }
+            });
 
-        // Generate mock assistant message
-        const assistantMessage = await getMockResponse(content, conversationId);
-        
-        // Add user message and assistant message to database
-        await prisma.message.createMany({
-            data: [userMessage, assistantMessage]
-        })
+            // Generate and create assistant message
+            const assistantMessage: Message = await tx.message.create({
+                data: {
+                    id: uuidv4(),
+                    conversationId,
+                    content: (await getMockResponse(content, conversationId)).content,
+                    type: 'assistant',
+                    timestamp: new Date()
+                }
+            });
 
-        res.status(201).json(assistantMessage);
+            // Update conversation timestamp
+            await tx.conversation.update({
+                where: { id: conversationId },
+                data: { updatedAt: new Date() }
+            });
+
+            return { userMessage, assistantMessage };
+        });
+
+        res.status(201).json(result.assistantMessage);
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             switch (error.code) {
