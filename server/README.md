@@ -51,7 +51,7 @@ npm run test:watch # Run in watch mode
 ### Test Structure
 - `tests/setup.ts`: Global test configuration
 - `tests/transaction.test.ts`: Database transaction tests
-- Additional test files for routes and controllers
+- `tests/conversation.test.ts`: Server route tests using Supertest
 
 ## Error Handling
 
