@@ -37,6 +37,9 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
   });
 });
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+// Only start server if this file is run directly (not imported for tests)
+if (require.main === module) {
+  app.listen(port, () => {
+      console.log(`Server running at http://localhost:${port}`);
+  });
+}

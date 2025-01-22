@@ -161,7 +161,66 @@ describe("Conversation Operations", () => {
 
     });
 
-    it("should maintain conversation order by updated timestamp", async () => {
-        // Test conversation ordering
+    it("should return conversations in descending order by timestamp", async () => {
+        // Create first conversation
+        const firstConversation = await prisma.conversation.create({
+            data: {
+                id: uuidv4(),
+                title: "First Conversation",
+                createdAt: new Date(),
+                updatedAt: new Date()
+            }
+        });
+    
+        // Wait to ensure clear timestamp difference
+        await new Promise(resolve => setTimeout(resolve, 1000));
+    
+        // Create second conversation
+        const secondConversation = await prisma.conversation.create({
+            data: {
+                id: uuidv4(),
+                title: "Second Conversation",
+                createdAt: new Date(),
+                updatedAt: new Date()
+            }
+        });
+    
+        // Get all conversations
+        const response = await request(app)
+            .get('/api/conversation')
+            .expect(200)
+            .expect('Content-Type', /json/);
+    
+        // Verify order
+        expect(response.body.length).toBeGreaterThanOrEqual(2);
+        expect(new Date(response.body[0].updatedAt).getTime())
+            .toBeGreaterThan(new Date(response.body[1].updatedAt).getTime());
+        
+        // Verify specific order
+        expect(response.body[0].title).toBe("Second Conversation");
+        expect(response.body[1].title).toBe("First Conversation");
+    });
+    it("should reject conversation creation without title", async () => {
+        const response = await request(app)
+            .post('/api/conversation')
+            .send({ message: "Test message" }) // Missing title
+            .expect(400);
+    });
+    
+    it("should reject conversation creation without message", async () => {
+        const response = await request(app)
+            .post('/api/conversation')
+            .send({ title: "Test Title" }) // Missing message
+            .expect(400);
+    });
+    it("should reject message addition to nonexistent conversation", async () => {
+        const fakeId = uuidv4();
+        const response = await request(app)
+            .post(`/api/conversation/${fakeId}/messages`)
+            .send({
+                content: "Test message",
+                type: "user"
+            })
+            .expect(404);
     });
 });
