@@ -1,15 +1,16 @@
 // server/src/index.ts
-import express from 'express';
+import express, { Express } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { claudeRouter } from './routes/claude';
 import { conversationRouter } from './routes/conversation'
+import { apiLimiter } from './middleware/rateLimit';
 
 // Load environment variables
 dotenv.config();
 
-export const app = express();
-const port = process.env.PORT || 3000;
+export const app: Express = express();
+const port: string = process.env.PORT as string || String(3000);
 
 // Middleware
 app.use(cors({
@@ -18,6 +19,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type']
 }));
 app.use(express.json());
+app.use('/api/', apiLimiter) // Apply to all API routes
 
 // Routes
 app.use('/api/claude', claudeRouter);

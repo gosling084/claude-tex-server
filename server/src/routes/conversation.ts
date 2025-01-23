@@ -1,10 +1,10 @@
 // server/src/routes/conversation.ts
 import { Router, Request, Response, NextFunction } from 'express';
-import { Conversation, Message } from '../types/conversation';
+import { Conversation, Message, PrismaConversation } from '../types/conversation';
 import { v4 as uuidv4 } from 'uuid';
-import { getMockResponse } from '../mocks/responses';
 import prisma from '../lib/prisma';
 import { Prisma } from '@prisma/client';
+import { processMessage } from '../controllers/claude';
 
 const router = Router();
 
@@ -51,7 +51,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction): Promise
 // Get conversation by ID
 router.get('/:id', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const conversation: Conversation | null = await prisma.conversation.findUnique({
+        const conversation: PrismaConversation = await prisma.conversation.findUnique({
             where: {
                 id: req.params.id
             },
@@ -111,21 +111,11 @@ router.post('/', async (req: Request, res: Response, next: NextFunction): Promis
         }
 
         const conversationId: string = uuidv4();
-
-        // Create entry user message
-        const userMessage: Message = {
-            id: uuidv4(),
-            conversationId: conversationId,
-            content: message,
-            type: 'user',
-            timestamp: new Date()
-        };
-
-        // Generate assistant response
-        const assistantMessage = await getMockResponse(message, conversationId);
-
         // Create new conversation and add new messages in a single transaction
-        const newConversation: Conversation | null = await prisma.$transaction(async (tx) => {
+        const newConversation: PrismaConversation = await prisma.$transaction(async (tx) => {
+            // Get Claude response first (outside DB operations)
+            const claudeResponse: string = await processMessage(message);
+
             // Create conversation
             await tx.conversation.create({
                 data: {
@@ -136,9 +126,24 @@ router.post('/', async (req: Request, res: Response, next: NextFunction): Promis
                 }
             });
 
-            // Add messages
+            // Then create both messages
             await tx.message.createMany({
-                data: [userMessage, assistantMessage]
+                data: [
+                    {
+                        id: uuidv4(),
+                        conversationId,
+                        content: message,
+                        type: 'user',
+                        timestamp: new Date()
+                    },
+                    {
+                        id: uuidv4(),
+                        conversationId,
+                        content: claudeResponse,
+                        type: 'assistant',
+                        timestamp: new Date()
+                    }
+                ]
             });
 
             // Fetch new conversation from database
@@ -205,7 +210,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction): Promis
 router.post('/:id/messages', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { content, type } = req.body;
-        const conversationId = req.params.id;
+        const conversationId: string = req.params.id;
 
         if (!content || !type) {
             res.status(400).json({ message: 'Content and type are required' });
@@ -213,7 +218,7 @@ router.post('/:id/messages', async (req: Request, res: Response, next: NextFunct
         }
 
         // Verify conversation exists
-        const conversation = await prisma.conversation.findUnique({
+        const conversation: PrismaConversation = await prisma.conversation.findUnique({
             where: { id: conversationId }
         });
 
@@ -223,7 +228,10 @@ router.post('/:id/messages', async (req: Request, res: Response, next: NextFunct
         }
 
         // Create messages in a transaction
-        const result = await prisma.$transaction(async (tx) => {
+        const result: {
+            userMessage: Message;
+            assistantMessage: Message;
+        } = await prisma.$transaction(async (tx) => {
             // Create user message
             const userMessage: Message = await tx.message.create({
                 data: {
@@ -236,11 +244,12 @@ router.post('/:id/messages', async (req: Request, res: Response, next: NextFunct
             });
 
             // Generate and create assistant message
+            const claudeResponse: string = await processMessage(content);
             const assistantMessage: Message = await tx.message.create({
                 data: {
                     id: uuidv4(),
                     conversationId,
-                    content: (await getMockResponse(content, conversationId)).content,
+                    content: claudeResponse,
                     type: 'assistant',
                     timestamp: new Date()
                 }
