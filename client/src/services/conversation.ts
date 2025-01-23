@@ -19,13 +19,13 @@ export const getConversation = async (id: string): Promise<Conversation> => {
   return response.json();
 };
 
-export const createConversation = async (title: string, message: string): Promise<Conversation> => {
+export const createConversation = async (message: string): Promise<Conversation> => {
   const response = await fetch(`${API_URL}/conversation`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ title, message }),
+    body: JSON.stringify({ message }),
   });
   if (!response.ok) {
     throw new Error('Failed to create conversation');

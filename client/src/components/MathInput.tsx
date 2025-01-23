@@ -30,7 +30,7 @@ const MathInput = ({ onSubmit, onChange, isLoading = false }: MathInputProps) =>
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!prompt.trim()) return;
+    if (!prompt.trim() || e.type === 'keydown') return; // Ignore if from keydown
     
     await onSubmit(prompt);
     setPrompt(''); // Clear input after submission
@@ -52,7 +52,11 @@ const MathInput = ({ onSubmit, onChange, isLoading = false }: MathInputProps) =>
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
       e.preventDefault();
       if (prompt.trim()) {
-        handleSubmit(e);
+        e.preventDefault();  // Prevent form submission
+          onSubmit(prompt).then(() => {
+            setPrompt('');
+              onChange?.('');
+          });
       }
     }
   };

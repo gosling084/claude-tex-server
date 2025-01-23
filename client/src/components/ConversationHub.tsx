@@ -53,12 +53,6 @@ const ConversationHub = ({
     fetchConversations();
   }, []);
 
-  const inferTitle = (message: string): string => {
-    // Take first 5 words or up to first question mark
-    const title = message.split('?')[0].split(' ').slice(0, 5).join(' ');
-    return title + (title.length < message.length ? '...' : '');
-  };
-
   const handleSubmit = async (prompt: string) => {
     try {
       if (activeConversationId) {
@@ -76,25 +70,11 @@ const ConversationHub = ({
           setCurrentMessages([...currentMessages, userMessage, assistantMessage]);
         });          
       } else {
-        // Create new conversation and handle both messages
-        const newConversation = await createConversation(inferTitle(prompt), prompt);
+        // For new conversation, don't call addMessage
+        const newConversation = await createConversation(prompt);
         setActiveConversationId(newConversation.id);
+        setCurrentMessages(newConversation.messages);
         
-        // Create user message
-        const userMessage: Message = {
-            id: crypto.randomUUID(),
-            conversationId: newConversation.id,
-            content: prompt,
-            type: 'user',
-            timestamp: new Date()
-        };
-
-        // Get assistant response
-        const assistantMessage = await addMessage(newConversation.id, prompt, 'user');
-        
-        // Set both messages
-        setCurrentMessages([userMessage, assistantMessage]);
-          
         // Add to conversation metas
         setConversationMetas([{
           id: newConversation.id,

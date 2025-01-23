@@ -103,9 +103,9 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction): Prom
 // Create new conversation
 router.post('/', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const { title, message } = req.body;
+        const { message } = req.body;
         
-        if (!title || !message) {
+        if (!message) {
             res.status(400).json({ message: 'Title and initial message are required' });
             return;
         }
@@ -113,6 +113,12 @@ router.post('/', async (req: Request, res: Response, next: NextFunction): Promis
         const conversationId: string = uuidv4();
         // Create new conversation and add new messages in a single transaction
         const newConversation: PrismaConversation = await prisma.$transaction(async (tx) => {
+            // Use prompt message to generate title using Claude API
+            const titleResponse: string = await processMessage(
+                `Generate a concise, descriptive title (max 5 words) for this math question: "${message}"`
+              );
+            const title: string = titleResponse.trim();
+            
             // Get Claude response first (outside DB operations)
             const claudeResponse: string = await processMessage(message);
 
