@@ -1,7 +1,7 @@
 // client/src/components/ConversationHub.tsx
 import { useState, useEffect } from 'react';
 import { Message } from '../types/conversation';
-import { getConversations, getConversation, createConversation, addMessage } from '../services/conversation';
+import { getConversations, createConversation, addMessage } from '../services/conversation';
 import MathInput from './MathInput';
 import ChatMessage from './ChatMessage';
 
@@ -94,16 +94,18 @@ const ConversationHub = ({
     <div className="space-y-8">
       {/* Chat history - shows only when conversation is active */}
       {activeConversationId && (
-        <div className="chat-history">
-          {currentMessages.map(message => (
-            <ChatMessage
-              key={message.id}
-              id={message.id}
-              type={message.type}
-              content={message.content}
-              timestamp={new Date(message.timestamp)}
-            />
-          ))}
+        <div className="chat-scroll-container">
+          <div className="chat-history">
+            {currentMessages.map(message => (
+              <ChatMessage
+                key={message.id}
+                id={message.id}
+                type={message.type}
+                content={message.content}
+                timestamp={new Date(message.timestamp)}
+              />
+            ))}
+          </div>
         </div>
       )}
   

@@ -405,3 +405,38 @@ body {
 .header-right {
   margin-left: auto;  /* Push to right side */
 }
+
+.chat-scroll-container {
+  height: 32rem;  /* equivalent to h-128 in Tailwind */
+  overflow-y: auto;
+  background-color: var(--color-assistant-msg);
+  border-radius: var(--radius-large);
+  border: 1px solid var(--color-border);
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.chat-scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-scroll-container::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.chat-scroll-container::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Modify chat-history class to remove conflicting styles */
+.chat-scroll-container .chat-history {
+  margin-bottom: 0;  /* Remove margin that could cause scrolling issues */
+  border: none;      /* Remove border since container has it */
+  border-radius: 0;  /* Remove border radius since container has it */
+}
