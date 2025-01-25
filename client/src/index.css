@@ -124,17 +124,25 @@ body {
   margin-left: auto;
 }
 
+/* Clear Button */
 .clear-button {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-secondary);
   background: none;
-  border: none;
-  font-size: 0.875rem;
+  border: 1px solid var(--color-border);
+  font-size: 0.750rem;
   cursor: pointer;
-  padding: 0.25rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: var(--radius-base);
+  transition: all 0.2s ease;
 }
 
 .clear-button:hover {
-  color: rgba(255, 255, 255, 0.7);
+  background-color: var(--color-assistant-msg);
+}
+
+.clear-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .send-button {
@@ -181,6 +189,7 @@ body {
 
 .chat-section {
   width: 66.7%;
+  max-width: 720px;
   margin: auto;
 }
 
@@ -439,4 +448,70 @@ body {
   margin-bottom: 0;  /* Remove margin that could cause scrolling issues */
   border: none;      /* Remove border since container has it */
   border-radius: 0;  /* Remove border radius since container has it */
+}
+
+
+/* Model selector styles */
+.model-selector-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  background-color: var(--color-user-msg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 0.750rem;
+  transition: all 0.2s ease;
+}
+
+.model-selector-button:hover {
+  background-color: var(--color-assistant-msg);
+}
+
+.model-selector-button svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.model-selector-dropdown {
+  position: fixed;
+  margin-bottom: 0.5rem;
+  width: 16rem;
+  background-color: var(--color-assistant-msg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-large);
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: 50;
+}
+
+.model-option {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  transition: background-color 0.2s;
+}
+
+.model-option:hover {
+  background-color: #2D2D2D;
+}
+
+.model-option.active {
+  background-color: #2D2D2D;
+}
+
+.model-option-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.model-option-description {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
 }

@@ -120,6 +120,7 @@ const MathDisplay = ({ tex, align = 'left' }: MathDisplayProps) => {
               (element as HTMLElement).style.overflowX = 'auto';
               (element as HTMLElement).style.maxHeight = 'none';
               (element as HTMLElement).style.overflow = 'visible';
+              (element as HTMLElement).style.justifySelf = 'center';
             });
 
             // Also target the specific display equation containers

@@ -103,7 +103,7 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction): Prom
 // Create new conversation
 router.post('/', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const { message } = req.body;
+        const { message, model } = req.body;
         
         if (!message) {
             res.status(400).json({ message: 'Title and initial message are required' });
@@ -115,12 +115,13 @@ router.post('/', async (req: Request, res: Response, next: NextFunction): Promis
         const newConversation: PrismaConversation = await prisma.$transaction(async (tx) => {
             // Use prompt message to generate title using Claude API
             const titleResponse: string = await processMessage(
-                `Generate a concise, descriptive title (max 5 words) for this math question: "${message}"`
+                `Generate a concise, descriptive title (max 5 words) for this math question: "${message}"`,
+                model
               );
             const title: string = titleResponse.trim();
             
             // Get Claude response first (outside DB operations)
-            const claudeResponse: string = await processMessage(message);
+            const claudeResponse: string = await processMessage(message, model);
 
             // Create conversation
             await tx.conversation.create({
@@ -215,7 +216,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction): Promis
 // Add message to conversation
 router.post('/:id/messages', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const { content, type } = req.body;
+        const { content, type, model } = req.body;
         const conversationId: string = req.params.id;
 
         if (!content || !type) {
@@ -250,7 +251,7 @@ router.post('/:id/messages', async (req: Request, res: Response, next: NextFunct
             });
 
             // Generate and create assistant message
-            const claudeResponse: string = await processMessage(content);
+            const claudeResponse: string = await processMessage(content, model);
             const assistantMessage: Message = await tx.message.create({
                 data: {
                     id: uuidv4(),

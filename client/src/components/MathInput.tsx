@@ -1,15 +1,18 @@
 // client/src/components/MathInput.tsx
 import { useState, useRef, useEffect } from 'react';
 import { ArrowUp } from 'lucide-react';
+import { CLAUDE_MODELS, ClaudeModel } from '../types/config';
+import ModelSelector from './ModelSelector';
 
 interface MathInputProps {
-  onSubmit: (prompt: string) => Promise<void>;
+  onSubmit: (prompt: string, model: ClaudeModel) => Promise<void>;
   onChange?: (value: string) => void;
   isLoading?: boolean;
 }
 
 const MathInput = ({ onSubmit, onChange, isLoading = false }: MathInputProps) => {
   const [prompt, setPrompt] = useState('');
+  const [currentModel, setCurrentModel] = useState(CLAUDE_MODELS[0]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Auto-resize logic
@@ -32,7 +35,7 @@ const MathInput = ({ onSubmit, onChange, isLoading = false }: MathInputProps) =>
     e.preventDefault();
     if (!prompt.trim() || e.type === 'keydown') return; // Ignore if from keydown
     
-    await onSubmit(prompt);
+    await onSubmit(prompt, currentModel.id);
     setPrompt(''); // Clear input after submission
     onChange?.(''); // Also clear the preview
   };
@@ -53,7 +56,7 @@ const MathInput = ({ onSubmit, onChange, isLoading = false }: MathInputProps) =>
       e.preventDefault();
       if (prompt.trim()) {
         e.preventDefault();  // Prevent form submission
-          onSubmit(prompt).then(() => {
+          onSubmit(prompt, currentModel.id).then(() => {
             setPrompt('');
               onChange?.('');
           });
@@ -77,6 +80,10 @@ const MathInput = ({ onSubmit, onChange, isLoading = false }: MathInputProps) =>
   
   <div className="input-actions">
     <div className="input-actions-left">
+    <ModelSelector
+            currentModel={currentModel}
+            onModelChange={setCurrentModel}
+          />
       <button
         type="button"
         onClick={handleClear}

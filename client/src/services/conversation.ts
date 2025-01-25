@@ -1,5 +1,6 @@
 // client/src/services/conversation.ts
-import { Conversation, Message } from '../types/conversation';
+import { Conversation, Message } from '@/types/conversation';
+import { ClaudeModel } from '@/types/config';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
@@ -19,13 +20,13 @@ export const getConversation = async (id: string): Promise<Conversation> => {
   return response.json();
 };
 
-export const createConversation = async (message: string): Promise<Conversation> => {
+export const createConversation = async (message: string, model: ClaudeModel): Promise<Conversation> => {
   const response = await fetch(`${API_URL}/conversation`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ message }),
+    body: JSON.stringify({ message, model }),
   });
   if (!response.ok) {
     throw new Error('Failed to create conversation');
@@ -33,13 +34,13 @@ export const createConversation = async (message: string): Promise<Conversation>
   return response.json();
 };
 
-export const addMessage = async (conversationId: string, content: string, type: 'user' | 'assistant'): Promise<Message> => {
+export const addMessage = async (conversationId: string, content: string, type: 'user' | 'assistant', model: ClaudeModel): Promise<Message> => {
   const response = await fetch(`${API_URL}/conversation/${conversationId}/messages`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ content, type }),
+    body: JSON.stringify({ content, type, model }),
   });
   if (!response.ok) {
     throw new Error('Failed to add message');

@@ -4,6 +4,7 @@ import { Message } from '../types/conversation';
 import { getConversations, createConversation, addMessage } from '../services/conversation';
 import MathInput from './MathInput';
 import ChatMessage from './ChatMessage';
+import { ClaudeModel } from '@/types/config';
 
 interface ConversationMeta {
   id: string;
@@ -53,7 +54,7 @@ const ConversationHub = ({
     fetchConversations();
   }, []);
 
-  const handleSubmit = async (prompt: string) => {
+  const handleSubmit = async (prompt: string, model: ClaudeModel) => {
     try {
       if (activeConversationId) {
         // Create user message locally first
@@ -66,12 +67,12 @@ const ConversationHub = ({
         };
         
         // Send user message, get assistant response, then append both to conversation
-        await addMessage(activeConversationId, prompt, 'user').then((assistantMessage) => {
+        await addMessage(activeConversationId, prompt, 'user', model).then((assistantMessage) => {
           setCurrentMessages([...currentMessages, userMessage, assistantMessage]);
         });          
       } else {
         // For new conversation, don't call addMessage
-        const newConversation = await createConversation(prompt);
+        const newConversation = await createConversation(prompt, model);
         setActiveConversationId(newConversation.id);
         setCurrentMessages(newConversation.messages);
         

@@ -5,6 +5,7 @@ dotenv.config();
 import Anthropic from '@anthropic-ai/sdk';
 import { CLAUDE_CONFIG } from '../config/claude';
 import { ClaudeMessage } from '../types/conversation';
+import { ClaudeModel } from '../types/config';
 
 if (!process.env.ANTHROPIC_API_KEY) {
   throw new Error('ANTHROPIC_API_KEY environment variable is not set');
@@ -42,10 +43,10 @@ Additional rules:
 - Include units in LaTeX math mode when relevant
 - Use \\text{} for words within math environments`;
 
-export async function processMessage(prompt: string, retryCount = 0): Promise<string> {
+export async function processMessage(prompt: string, model: ClaudeModel = 'claude-3-5-haiku-latest', retryCount = 0): Promise<string> {
   try {
     const response: ClaudeMessage = await anthropic.messages.create({
-      model: "claude-3-haiku-20240307",
+      model: model,
       max_tokens: 1024,
       system: MATH_SYSTEM_PROMPT,
       messages: [
@@ -71,7 +72,7 @@ export async function processMessage(prompt: string, retryCount = 0): Promise<st
   } catch (error) {
     if (retryCount < CLAUDE_CONFIG.retry_attempts) {
       await new Promise(r => setTimeout(r, 1000 * Math.pow(2, retryCount)));
-      return processMessage(prompt, retryCount + 1);
+      return processMessage(prompt, model, retryCount + 1);
     }
     
     console.error('Claude API Error:', error); // Add detailed logging
