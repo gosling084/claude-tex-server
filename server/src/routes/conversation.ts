@@ -174,7 +174,13 @@ router.post('/', async (req: Request, res: Response, next: NextFunction): Promis
                     }
                 }
             });
-        });
+        },
+        // Transaction options 
+        {
+            maxWait: 10000,
+            timeout: 120000
+        }
+    );
         if (!newConversation) {
             res.status(404).json({ message: 'Conversation not found' });
             return;
@@ -269,7 +275,13 @@ router.post('/:id/messages', async (req: Request, res: Response, next: NextFunct
             });
 
             return { userMessage, assistantMessage };
-        });
+        },
+        // Transaction options 
+        {
+            maxWait: 10000,
+            timeout: 120000
+        }
+    );
 
         res.status(201).json(result.assistantMessage);
     } catch (error) {
